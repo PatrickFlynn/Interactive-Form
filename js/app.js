@@ -1,3 +1,5 @@
+//Load the DOM before ANY javascript
+
 window.addEventListener('load', (event) => {
     
     //-----------------Job Role Other----------------------------------------
@@ -22,6 +24,7 @@ window.addEventListener('load', (event) => {
 
     let shirt_theme = document.querySelector('#design');
     let shirt_colors = document.querySelector('#color');
+
     /* This event listener will dynamically hide/adjust the shirt options depending on
     which design is picked. E.g. if I <3 JS is selected, only shirt colors for that shirt
     will be displayed in the dropdown */
@@ -175,6 +178,24 @@ window.addEventListener('load', (event) => {
         apply_remove_error(email_field, email_valid);
     })
 
+    /*-------Activities Not Blank Portion------*/
+    
+    function validate_activities(){
+        let checked_sum = 0;
+        
+        for (let i = 0; i < activities_box.children.length; i++){
+            if (activities_box.children[i].querySelector('input[type="checkbox"]').checked){
+                checked_sum += 1;
+            }
+        }
+        if (checked_sum > 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     /*-------Credit Card # Portion------*/
     let credit_card_num = document.querySelector('#cc-num');
 
@@ -200,11 +221,91 @@ window.addEventListener('load', (event) => {
 
 
     /*-------Credit Card Zip Portion------*/
-    let credit_card_zip = document.querySelectorAll('#zip');
+    let credit_card_zip = document.querySelector('#zip');
+
+    function validate_zip(){
+        let zip_pattern = /^\d{5}$/;
+
+        if (pay_method.options[1].selected === true){
+            if (zip_pattern.test(credit_card_zip.value)){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    credit_card_zip.addEventListener('blur', () => {
+
+        let ccz_valid = validate_zip();
+
+        apply_remove_error(credit_card_zip, ccz_valid);
+
+    })
 
 
-    /*-------Credit Card CCV Portion------*/
-    let credit_card_ccv = document.querySelectorAll('#ccv');
+    /*-------Credit Card CVV Portion------*/
+    let credit_card_cvv = document.querySelector('#cvv');
+
+    function validate_cvv(){
+        let cvv_pattern = /^\d{3}$/;
+
+        if (pay_method.options[1].selected === true){
+            if (cvv_pattern.test(credit_card_cvv.value)){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    credit_card_cvv.addEventListener('blur', () => {
+
+        let cvv_valid = validate_cvv();
+
+        apply_remove_error(credit_card_cvv, cvv_valid);
+
+    })
+
+
+    //-------------------Form Submission handling--------------------------
+
+    let form = document.querySelector('form'); 
+
+    form.addEventListener('submit', (e) => {
+
+        //This array is a set of tests to run in order to verify necassary requirements are met
+        let tests =[
+            [validate_name(), name_input],
+            [validate_email(), email_field],
+            [validate_activities(), activities_box],
+            [validate_ccn(), credit_card_num],
+            [validate_zip(), credit_card_zip],
+            [validate_cvv(), credit_card_cvv],
+        ]
+
+        let invalidated = [];
+        
+        for (let test = 0; test < tests.length; test++){
+            //Ensure tests are run even if user never clicked/focused input
+            apply_remove_error(tests[test][1], tests[test][0]);
+            
+            //as soon as a test fails invalidate the submit and add the test failure to array
+            if (!tests[test][0]){
+                e.preventDefault();
+                invalidated.push(tests[test])
+            }
+        }
+
+        //if array of failures is greater than 0, scroll to the first item
+        if (invalidated.length > 0){
+            invalidated[0][1].parentElement.scrollIntoView();
+        }
+    })
 
 
 
