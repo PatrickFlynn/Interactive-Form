@@ -51,6 +51,22 @@ window.addEventListener('load', (event) => {
 
     });
 
+    //------------------Activities Focus Bubbling------------------------------
+
+    let activities_box = document.querySelector('#activities-box');
+    
+    activities_box.addEventListener('focusin', (e) => {
+
+        e.target.parentElement.classList.add('focus');
+
+    })
+
+    activities_box.addEventListener('focusout', (e) => {
+
+        e.target.parentElement.classList.remove('focus');
+
+    })
+
     //------------------Activities Total----------------------------------------
     let activites_fieldset = document.querySelector('#activities');
 
@@ -114,10 +130,12 @@ window.addEventListener('load', (event) => {
     function apply_remove_error(input_field, true_false){
         if (true_false){
             input_field.parentElement.lastElementChild.style.display = 'none';
-            input_field.parentElement.className = ''
+            input_field.parentElement.classList.add('valid');
+            input_field.parentElement.classList.remove('not-valid');
         } else {
             input_field.parentElement.lastElementChild.style.display = 'block';
-            input_field.parentElement.className = 'not-valid';
+            input_field.parentElement.classList.add('not-valid');
+            input_field.parentElement.classList.remove('valid');
         }
     }
 
@@ -143,7 +161,7 @@ window.addEventListener('load', (event) => {
 
     function validate_email(){
         
-        let email_pattern = /.{3,}@.{3,}\.com/i
+        let email_pattern = /.{2,}@.{2,}\.com/i
 
         if (email_pattern.test(email_field.value)){
             return true;
@@ -156,5 +174,38 @@ window.addEventListener('load', (event) => {
         let email_valid = validate_email();
         apply_remove_error(email_field, email_valid);
     })
+
+    /*-------Credit Card # Portion------*/
+    let credit_card_num = document.querySelector('#cc-num');
+
+    function validate_ccn(){
+        
+        let ccn_pattern = /^\d{13,16}$/
+        if (pay_method.options[1].selected === true){
+            if (ccn_pattern.test(credit_card_num.value)){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+        
+    }
+
+    credit_card_num.addEventListener('blur', () => {
+        let ccn_valid = validate_ccn();
+        apply_remove_error(credit_card_num, ccn_valid);
+    })
+
+
+    /*-------Credit Card Zip Portion------*/
+    let credit_card_zip = document.querySelectorAll('#zip');
+
+
+    /*-------Credit Card CCV Portion------*/
+    let credit_card_ccv = document.querySelectorAll('#ccv');
+
+
 
   });
