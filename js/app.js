@@ -32,6 +32,9 @@ window.addEventListener('load', (event) => {
 
         shirt_color_div.style.display = 'block';
 
+        //Added after submission review 
+        shirt_colors.options.selectedIndex  = 0;
+
         let matchpattern = ''
         let punMatch = /puns/i;
 
@@ -67,6 +70,17 @@ window.addEventListener('load', (event) => {
     activities_box.addEventListener('focusout', (e) => {
 
         e.target.parentElement.classList.remove('focus');
+
+        if (validate_activities()){
+            activities_box.parentElement.classList.remove('not-valid');
+            activities_box.parentElement.classList.add('valid');
+            console.log(activities_box.parentElement.lastElementChild.id === 'activities-hint')
+            if (activities_box.parentElement.lastElementChild.id === 'activities-hint'){
+                activities_box.parentElement.lastElementChild.style.display = 'none';
+            }
+        } else {
+            activities_box.parentElement.classList.remove('valid');
+        }
 
     })
 
